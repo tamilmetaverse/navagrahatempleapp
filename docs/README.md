@@ -1,6 +1,6 @@
 # Project documentation
 
-Current implementation and next work, updated 28 September 2026. Start here when continuing with an engineer, Claude, Cursor or Codex.
+Current implementation and next work, updated 28 September 2026. Start here when continuing with an engineer with LLM
 
 - [Project handoff](handoff/Project_Handoff.md) — complete readable project update.
 - [Shareable Word document](handoff/Navagraha_Project_Handoff.docx) — five-page engineering handoff.
