@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {planTrip,estimatedMatrix,hours,type Settings} from '../lib/navagraha/planner.ts';
+const base:Settings={base:9,days:2,start:360,end:1200,pace:'normal',date:'2026-09-28'};
+const matrix=estimatedMatrix();
+test('two-day circuit covers nine unique temples within opening windows and nightly return',()=>{const p=planTrip(base,matrix);assert.equal(p.complete,true);assert.equal(new Set(p.stops.map(s=>s.index)).size,9);for(const s of p.stops)assert(hours(s.index,base.date,s.day).some(([a,b])=>s.arrival>=a&&s.departure<=b));assert(p.returns.every(r=>r.arrival<=base.end));});
+test('short day explicitly lists unscheduled temples',()=>{const p=planTrip({...base,days:1,start:720,end:800},matrix);assert.equal(p.complete,false);assert.equal(p.stops.length+p.missing.length,9);});
+test('invalid and missing end times cannot bypass constraints',()=>{for(const end of [NaN,Infinity,-1,1500,300])assert.throws(()=>planTrip({...base,end},matrix));});
+test('invalid date and matrix are rejected',()=>{assert.throws(()=>planTrip({...base,date:'bad'},matrix));assert.throws(()=>planTrip(base,[[0]]));});
+test('weekday hours differ without timezone drift',()=>{assert.equal(hours(0,'2026-09-28',0)[0][0],360);assert.equal(hours(0,'2026-09-28',1)[0][0],420);});
+test('replanning preserves completed history and nine-stop accounting',()=>{const p=planTrip(base,matrix);const prefix=p.stops.slice(0,3);const n=planTrip(base,matrix,prefix,90);assert.deepEqual(n.stops.slice(0,3),prefix);assert.equal(new Set([...n.stops.map(s=>s.index),...n.missing]).size,9);});
+test('late return is explicit and remaining days remain usable',()=>{const s={...base,days:3};const p=planTrip(s,matrix);const firstDay=p.stops.filter(x=>x.day===0);const delay=400;const n=planTrip(s,matrix,firstDay,delay);assert(n.lateReturn);assert(n.returns[0].arrival>=firstDay.at(-1)!.departure+delay);assert(n.stops.length>firstDay.length);});
+test('matrix durations may not be negative or nonfinite',()=>{const bad=matrix.map(r=>[...r]);bad[0][1]=NaN;assert.throws(()=>planTrip(base,bad));});
