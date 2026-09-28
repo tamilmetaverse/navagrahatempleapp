@@ -1,5 +1,3 @@
-> **Release scope update — 28 September 2026:** The deployed version is desktop-first. This document is the original broader roadmap, not the implemented feature list. Start with [current status](docs/STATUS.md), [next steps](docs/NEXT_STEPS.md), and [implemented architecture](docs/ARCHITECTURE.md). Mobile, PWA, PostGIS and cloud sync remain future work. The untouched original is archived in [docs/reference](docs/reference/README.md).
-
 # Navagraha Interactive Map — Build Plan
 
 ## 1. Overview
